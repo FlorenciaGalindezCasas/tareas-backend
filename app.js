@@ -11,47 +11,47 @@ const app = express();
 
 const port = process.env.PORT || 4001;
 
+// Configuración de CORS
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173", 
+    origin: [
+      "https://tareas-front.onrender.com",
+      "http://localhost:5173", 
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
+    allowedHeaders: ["Content-Type", "Authorization"], 
+    credentials: true, 
   })
 );
 
+// Middleware de sesión
 app.use(
   session({
     secret: "florencia40029082",
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true, 
+      secure: process.env.NODE_ENV === "production", 
+      httpOnly: true,
       sameSite: "strict",
     },
   })
 );
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-/* app.use((req, res, next) => {
-  res.header(
-    "Access-Control-Allow-Origin",
-    "http://localhost:5173",
-    "http://localhost:5174"
-  );
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  next();
-}); */
 
+// Ruta principal
 app.get("/", (req, res) => {
-  res.send("¡Hola, mundo!"); 
+  res.send("¡Hola, mundo!");
 });
 
+// Rutas de la aplicación
 app.use("/auth", authRoute);
 app.use("/task", taskRoute);
 app.use("/tag", tagRoute);
 
+// Iniciar el servidor
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
